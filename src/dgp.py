@@ -313,7 +313,7 @@ class dgp_did():
         return df
     
     
-class dgp_class():
+class dgp_school():
     """
     Data Generating Process: class size and test scores
     """
