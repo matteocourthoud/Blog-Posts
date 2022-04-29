@@ -1,3 +1,10 @@
+"""
+Title:  Data Generating Processes
+Author: Matteo Courthoud
+Date:   24/03/2022
+"""
+
+
 import numpy as np
 import scipy as sp
 import pandas as pd
