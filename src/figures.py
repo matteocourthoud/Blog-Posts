@@ -29,7 +29,7 @@ def plot_test(mu0=0, mu1=3, sigma=1, alpha=0.05, n=100):
 
     # Plot areas
     plt.fill_between(x[x>=cv], pdf1[x>=cv], color='r', alpha=0.4, label=f'Significance: α={alpha:.2f}')
-    plt.fill_between(x[x<=cv], pdf2[x<=cv], color='g', alpha=0.4, label=f'Power: 1-β={power:.2f}')
+    plt.fill_between(x[x<=cv], pdf2[x<=cv], color='g', alpha=0.4, label=f'β={1-power:.2f}')
 
     # Vertical lines
     plt.vlines(cv, ymin=0, ymax=plt.ylim()[1], color='k', label=f'Critical Value: {cv:.2f}')

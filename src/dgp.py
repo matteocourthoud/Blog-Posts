@@ -352,3 +352,29 @@ class dgp_school():
         df['hist_score'] = 1 + 0.2*df[self.T] + ability + history_hours + 5*df['good_school'] + rnd(size=N)
                 
         return df
+    
+
+class dgp_marketplace():
+    """
+    Data Generating Process: online marketplace
+    """
+    
+    def generate_data(self, seed=1, N=10_000):
+        np.random.seed(seed)
+        
+        # Does the firm sells only online?
+        online = np.random.binomial(1, 0.5, N)
+        
+        # How many products does the firm have
+        products = 1 + np.random.poisson(1, N)
+        
+        # What is the age of the firm
+        t = np.random.exponential(0.5*products, N) 
+        
+        # Sales
+        sales = 1e3 * np.random.exponential(products + np.maximum((1 + 0.3*products + 4*online)*t - 0.5*(1 + 6*online)*t**2, 0), N)
+
+        # Generate the dataframe
+        df = pd.DataFrame({'age': t, 'sales': sales, 'online': online, 'products': products})
+                
+        return df
