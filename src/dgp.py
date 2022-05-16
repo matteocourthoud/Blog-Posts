@@ -378,3 +378,30 @@ class dgp_marketplace():
         df = pd.DataFrame({'age': t, 'sales': sales, 'online': online, 'products': products})
                 
         return df
+    
+    
+    
+class dgp_store_coupons():
+    """
+    Data Generating Process: store coupons
+    """
+    
+    def generate_data(self, seed=1, N=300, K=5):
+        np.random.seed(seed)
+        
+        # Incomme
+        income = np.round(np.random.normal(50, 10, N), 3) 
+        
+        # Using a coupon
+        coupons = np.round(np.random.normal(0.5, 0.1, N) - income / 200, 3)
+        
+        # Day of the week
+        day = np.random.choice(range(1,8), N)
+        
+        # Sales
+        sales = np.round(10 * (income + 20*coupons + day + np.random.normal(10, 2, N)), 1)
+
+        # Generate the dataframe
+        df = pd.DataFrame({'sales': sales, 'coupons': coupons, 'income': income, 'dayofweek': [str(d) for d in day]})
+
+        return df

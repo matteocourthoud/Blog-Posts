@@ -53,7 +53,8 @@ mpl.rcParams['legend.facecolor'] = 'white'
 mpl.rcParams['legend.edgecolor'] = 'gray'
 mpl.rcParams['legend.borderpad'] = 0.6
 
-# Lines
+# Other
 mpl.rcParams['lines.linewidth'] = 3
+mpl.rcParams['lines.markersize'] = 10
 
 
