@@ -20,3 +20,7 @@ If you find mistakes or you have suggestions for new posts, let me know! Hug ðŸ¤
 
 	*How to run valid experiments with smaller sample sizes with the Sequential Probability Ratio Test*
 
+- [DAGs and Control Variables](https://medium.com/p/954506cec665)<img align="right" width="100" src="covers/controls.png">
+
+  *How to select control variables for causal inference using Directed Acyclic Graphs*
+
