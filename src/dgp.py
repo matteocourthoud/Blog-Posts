@@ -405,3 +405,75 @@ class dgp_store_coupons():
         df = pd.DataFrame({'sales': sales, 'coupons': coupons, 'income': income, 'dayofweek': [str(d) for d in day]})
 
         return df
+
+    
+class dgp_educ_wages():
+    """
+    Data Generating Process: aducation and wages
+    """
+    
+    def generate_data(self, seed=1, N=300):
+        np.random.seed(seed)
+        
+        # Ability
+        ability = np.round(np.random.uniform(0, 10, N), 3) 
+        
+        # Controls 
+        age = np.random.randint(25, 65, N)
+        gender = np.random.choice(['male', 'female'], N)
+        
+        # Education
+        education = np.random.randint(5, 10, N) + ability//3
+        
+        # Wage
+        wage = 100 * np.round(ability/2 + education + 8*np.log(age) + 2*(gender=='male') + np.random.normal(0, 4, N))
+        
+        # Generate the dataframe
+        df = pd.DataFrame({'age': age, 'gender': gender, 'education': education, 'wage': wage})
+
+        return df
+    
+    
+class dgp_tbd():
+    """
+    Data Generating Process: TBD
+    """
+    
+    def generate_data(self, a=1, b=-.3, c=3, N=1000, seed=1):
+        np.random.seed(seed)
+        
+        # Ability
+        z = np.random.normal(0, 1, N)
+        
+        # Controls 
+        x = c*z + np.random.normal(0, 1, N)
+        
+        # Education
+        y = a*x + b*z + np.random.normal(0, 1, N)
+                
+        # Generate the dataframe
+        df = pd.DataFrame({'x': x, 'y': y, 'z': z})
+
+        return df
+    
+    
+class dgp_balance():
+    """
+    Data Generating Process: random assignment 
+    """
+    
+    def generate_data(self, N=1000, seed=1):
+        np.random.seed(seed)
+        
+        # Treatment assignment
+        group = np.random.choice(['treatment', 'control'], N, p=[0.3, 0.7])
+        
+        # Covariates 
+        gender = np.random.binomial(1, 0.5 + 0.1*(group=='treatment'), N) 
+        age = 18 + np.random.beta(2 + (group=='treatment'), 5, N)*50 // 1
+        income = np.round(np.random.lognormal(8, 0.4 + 0.1*(group=='treatment'), N), 2)
+                
+        # Generate the dataframe
+        df = pd.DataFrame({'group': group, 'gender': gender, 'age': age, 'income': income})
+
+        return df
