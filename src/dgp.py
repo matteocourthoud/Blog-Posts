@@ -434,30 +434,30 @@ class dgp_educ_wages():
         return df
     
     
-class dgp_tbd():
+class dgp_pretest():
     """
-    Data Generating Process: TBD
+    Data Generating Process: pre-test bias
     """
     
     def generate_data(self, a=1, b=-.3, c=3, N=1000, seed=1):
         np.random.seed(seed)
         
-        # Ability
-        z = np.random.normal(0, 1, N)
+        # Past Sales
+        past_sales = np.random.normal(5, 1, N)
         
-        # Controls 
-        x = c*z + np.random.normal(0, 1, N)
+        # Advertisement 
+        ads = c*past_sales + np.random.normal(-3, 1, N)
         
         # Education
-        y = a*x + b*z + np.random.normal(0, 1, N)
+        sales = a*ads + b*past_sales + np.random.normal(0, 1, N)
                 
         # Generate the dataframe
-        df = pd.DataFrame({'x': x, 'y': y, 'z': z})
+        df = pd.DataFrame({'ads': ads, 'sales': sales, 'past_sales': past_sales})
 
         return df
     
     
-class dgp_balance():
+class dgp_rnd_assignment():
     """
     Data Generating Process: random assignment 
     """
@@ -467,6 +467,7 @@ class dgp_balance():
         
         # Treatment assignment
         group = np.random.choice(['treatment', 'control'], N, p=[0.3, 0.7])
+        arm = np.random.choice(['arm 1', 'arm 2', 'arm 3', 'arm 4'], N)
         
         # Covariates 
         gender = np.random.binomial(1, 0.5 + 0.1*(group=='treatment'), N) 
@@ -474,6 +475,7 @@ class dgp_balance():
         income = np.round(np.random.lognormal(8, 0.4 + 0.1*(group=='treatment'), N), 2)
                 
         # Generate the dataframe
-        df = pd.DataFrame({'group': group, 'gender': gender, 'age': age, 'income': income})
+        df = pd.DataFrame({'group': group, 'arm': arm, 'gender': gender, 'age': age, 'income': income})
+        df.loc[df['group']=='treatment', 'arm'] = np.nan
 
         return df
