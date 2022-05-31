@@ -8,13 +8,17 @@ If you find mistakes or you have suggestions for new posts, let me know! Hug ðŸ¤
 
 ## Posts
 
-- [Omitted Variable Bias And What We Can Do About It](https://towardsdatascience.com/344ac1477699)<img align="right" width="100" src="covers/ovb.png">
+- [Double Debiased Machine Learning, part 1](https://towardsdatascience.com/eb767a59975b)<img align="right" width="100" src="covers/pretest.png">
 
-  *A step-by-step guide to understanding and acting upon the most pervasive type of bias*
+  *The issue: causal inference, machine learning, and regularization bias*
 
-- [The FWL Theorem, Or How To Make All Regressions Intuitive](https://towardsdatascience.com/59f801eb3299)<img align="right" width="100" src="covers/fwl.png">
+- [Understanding Omitted Variable Bias](https://towardsdatascience.com/344ac1477699)<img align="right" width="100" src="covers/ovb.png">
 
-  *An introduction to the Frisch-Waugh-Lowell theorem and its applications*
+  *A step-by-step guide to the most pervasive type of bias*
+
+- [Understanding The Frisch-Waugh-Lovell Theorem](https://towardsdatascience.com/59f801eb3299)<img align="right" width="100" src="covers/fwl.png">
+
+  *A step-by-step guide to one of the most powerful theorems in causal inference*
 
 - [Goodbye Scatterplot, Welcome Binned Scatterplot](https://towardsdatascience.com/a928f67413e4)<img align="right" width="100" src="covers/binscatter.png">
 
