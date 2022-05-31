@@ -1,4 +1,4 @@
-# My Blog Posts
+# Medium Blog Posts
 
 Hi all! ðŸ‘‹ 
 
@@ -10,7 +10,7 @@ If you find mistakes or you have suggestions for new posts, let me know! Hug ðŸ¤
 
 - [Double Debiased Machine Learning, part 1](https://towardsdatascience.com/eb767a59975b)<img align="right" width="100" src="covers/pretest.png">
 
-  *The issue: causal inference, machine learning, and regularization bias*
+  *Causal inference, machine learning, and regularization bias*
 
 - [Understanding Omitted Variable Bias](https://towardsdatascience.com/344ac1477699)<img align="right" width="100" src="covers/ovb.png">
 
