@@ -439,7 +439,7 @@ class dgp_pretest():
     Data Generating Process: pre-test bias
     """
     
-    def generate_data(self, a=1, b=-.3, c=3, N=1000, seed=1):
+    def generate_data(self, a=1, b=.3, c=3, N=1000, seed=1):
         np.random.seed(seed)
         
         # Past Sales
