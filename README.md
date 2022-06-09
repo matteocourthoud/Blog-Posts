@@ -8,7 +8,11 @@ If you find mistakes or you have suggestions for new posts, let me know! Hug ðŸ¤
 
 ## Posts
 
-- [Double Debiased Machine Learning, part 1](https://towardsdatascience.com/eb767a59975b)<img align="right" width="100" src="covers/pretest.png">
+- [Double Debiased Machine Learning (part 2)](https://towardsdatascience.com/bf990720a0b2)<img align="right" width="100" src="covers/pds.png">
+
+  *How to remove regularization bias using post-double selection*
+
+- [Double Debiased Machine Learning (part 1)](https://towardsdatascience.com/eb767a59975b)<img align="right" width="100" src="covers/pretest.png">
 
   *Causal inference, machine learning, and regularization bias*
 
