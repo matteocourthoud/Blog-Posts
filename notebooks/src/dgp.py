@@ -151,7 +151,7 @@ class dgp4():
         # Outcomes
         df['Y'] = np.maximum(df['x1'] + df['x2'], 0) + df['T'] * df['tau'] + np.random.normal(0, 1, N)
 
-        return df  
+        return df
 
 
 class dgp_newsletter():
@@ -477,5 +477,40 @@ class dgp_rnd_assignment():
         # Generate the dataframe
         df = pd.DataFrame({'group': group, 'arm': arm, 'gender': gender, 'age': age, 'income': income})
         df.loc[df['group']=='treatment', 'arm'] = np.nan
+
+        return df
+
+
+class dgp_buttons():
+    """
+    Data Generating Process: buttons
+    """
+    
+    def __init__(self):
+        self.effects = [1,-4]
+        self.groups = ['control', 'ui1', 'ui2']
+    
+    def generate_data(self, N=1000, seed=1, truth=False):
+        np.random.seed(seed)
+        
+        # Device group
+        mobile = np.random.binomial(1, 0.5, N)
+        
+        # Treatment assignment
+        group = pd.Series(mobile)
+        group[mobile==True] = np.random.choice(self.groups, p=[0.4, 0.2, 0.4], size=sum(mobile==True))
+        group[mobile==False] = np.random.choice(self.groups, p=[0.4, 0.4, 0.2], size=sum(mobile==False))
+        
+        # Effects
+        effect1 = np.random.normal(self.effects[0]*(mobile==True), 1)
+        effect2 = np.random.normal(self.effects[1]*(mobile==False), 1)
+        revenue = (effect1 + effect2)*(group==self.groups[2]) + 3*mobile + np.random.normal(10, 1, N)
+                
+        # Generate the dataframe
+        df = pd.DataFrame({'group': group, 'revenue': revenue, 'mobile': mobile})
+        
+        # Add true effects
+        if truth: 
+            df['effect'] = (effect1 + effect2)*(group=='treat2')
 
         return df
