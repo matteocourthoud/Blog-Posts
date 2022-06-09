@@ -488,7 +488,7 @@ class dgp_buttons():
     
     def __init__(self):
         self.effects = [1,-4]
-        self.groups = ['control', 'ui1', 'ui2']
+        self.groups = [' default', 'button1', 'button2']
     
     def generate_data(self, N=1000, seed=1, truth=False):
         np.random.seed(seed)
