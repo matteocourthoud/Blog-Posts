@@ -467,12 +467,15 @@ class dgp_rnd_assignment():
         
         # Treatment assignment
         group = np.random.choice(['treatment', 'control'], N, p=[0.3, 0.7])
-        arm = np.random.choice(['arm 1', 'arm 2', 'arm 3', 'arm 4'], N)
+        arm_number = np.random.choice([1,2,3,4], N)
+        arm = [f'arm{n}' for n in arm_number]
         
         # Covariates 
         gender = np.random.binomial(1, 0.5 + 0.1*(group=='treatment'), N) 
         age = 18 + np.random.beta(2 + (group=='treatment'), 5, N)*50 // 1
-        income = np.round(np.random.lognormal(8, 0.4 + 0.1*(group=='treatment'), N), 2)
+        mean_income = 5 + arm_number
+        var_income = 0.4 + 0.1*(group=='treatment')
+        income = np.round(np.random.lognormal(mean_income, mean_income, N), 2)
                 
         # Generate the dataframe
         df = pd.DataFrame({'Group': group, 'Arm': arm, 'Gender': gender, 'Age': age, 'Income': income})
