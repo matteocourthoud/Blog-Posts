@@ -475,8 +475,8 @@ class dgp_rnd_assignment():
         income = np.round(np.random.lognormal(8, 0.4 + 0.1*(group=='treatment'), N), 2)
                 
         # Generate the dataframe
-        df = pd.DataFrame({'group': group, 'arm': arm, 'gender': gender, 'age': age, 'income': income})
-        df.loc[df['group']=='treatment', 'arm'] = np.nan
+        df = pd.DataFrame({'Group': group, 'Arm': arm, 'Gender': gender, 'Age': age, 'Income': income})
+        df.loc[df['Group']=='treatment', 'Arm'] = np.nan
 
         return df
 
