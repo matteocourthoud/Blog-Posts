@@ -472,14 +472,14 @@ class dgp_rnd_assignment():
 
         # Covariates 
         gender = np.random.binomial(1, 0.5 + 0.1*(group=='treatment'), N) 
-        age = 18 + np.random.beta(2 + (group=='treatment'), 5, N)*50 // 1
+        age = np.rint(18 + np.random.beta(2 + (group=='treatment'), 5, N)*50)
         mean_income = 6 + 0.1*arm_number
         var_income = 0.2 + 0.1*(group=='treatment')
         income = np.round(np.random.lognormal(mean_income, var_income, N), 2)
 
         # Generate the dataframe
         df = pd.DataFrame({'Group': group, 'Arm': arm, 'Gender': gender, 'Age': age, 'Income': income})
-        df.loc[df['Group']=='treatment', 'Arm'] = np.nan
+        df.loc[df['Group']=='control', 'Arm'] = np.nan
 
         return df
 
