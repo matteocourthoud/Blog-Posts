@@ -524,7 +524,7 @@ class dgp_cuped():
     Data Generating Process: CUPED
     """
     
-    def generate_data(self, N=100, beta=1, seed=1):
+    def generate_data(self, N=100, alpha=5, beta=0, gamma=1, delta=2, seed=1):
         np.random.seed(seed)
         
         # Individuals
@@ -534,10 +534,15 @@ class dgp_cuped():
         d = np.random.binomial(1, 0.5, N)
 
         # Individual outcome pre-treatment
-        y0 = np.random.normal(5, 1, N)
-        y1 = y0 + np.random.normal(1, 1, N) + np.random.normal(beta, 1, N) * d
+        y0 = alpha + beta*d + np.random.normal(0, 1, N)
+        y1 = y0 + gamma + delta*d + np.random.normal(0, 1, N)
+        
+        # Control variable
+        x0 = 1.5*y0 + np.random.normal(0, 1, N)
+        x1 = 1.5*y1 + np.random.normal(0, 1, N)
 
         # Generate the dataframe
-        df = pd.DataFrame({'i': i, 'd': d, 'y0': y0, 'y1': y1})
+        df = pd.DataFrame({'i': i, 'd': d, 'y0': y0, 'y1': y1, 'x0': x0, 'x1': x1})
 
         return df
+
