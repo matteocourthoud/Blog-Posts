@@ -517,3 +517,32 @@ class dgp_buttons():
             df['effect'] = (effect1 + effect2)*(group=='treat2')
 
         return df
+    
+    
+class dgp_cuped():
+    """
+    Data Generating Process: CUPED
+    """
+    
+    def generate_data(self, N=100, beta=1, seed=1):
+        np.random.seed(seed)
+        
+        # Individuals
+        i = np.tile(range(1,N+1), 2)
+
+        # Time period
+        t = ['before']*N + ['after']*N
+        t = [0]*N + [1]*N
+
+        # Treatment status
+        d = np.tile(np.random.binomial(1, 0.5, N), 2)
+
+        # Individual outcome pre-treatment
+        y_pre = np.tile(np.random.normal(5, 1, N), 2)
+        y = y_pre + np.random.normal(1, 1, N*2) * t + np.random.normal(beta, 1, N*2) * d * t
+
+        # Generate the dataframe
+        df = pd.DataFrame({'i': i, 't': t, 'd': d, 'y': y})
+        df = df.sort_values(['i', 't']).reset_index(drop=True)
+
+        return df
