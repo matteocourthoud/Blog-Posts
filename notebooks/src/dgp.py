@@ -524,7 +524,7 @@ class dgp_cuped():
     Data Generating Process: CUPED
     """
     
-    def __init__(self, alpha=5, beta=0, gamma=1, delta=2):
+    def __init__(self, alpha=5, beta=0, gamma=3, delta=2):
         self.alpha = alpha
         self.beta = beta
         self.gamma = gamma
