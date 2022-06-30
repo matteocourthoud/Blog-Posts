@@ -8,6 +8,10 @@ If you find mistakes or you have suggestions for new posts, let me know! Hug ðŸ¤
 
 ## Posts
 
+- [Understanding CUPED](https://towardsdatascience.com/a822523641af)<img align="right" width="100" src="covers/cuped.png">
+
+  *An in-depth guide to the state-of-the-art* *variance reduction technique for A/B tests*
+
 - [How to Compare Two or More Distributions](https://towardsdatascience.com/9b06ee4d30bf)<img align="right" width="100" src="covers/distr.png">
 
   *A complete guide to comparing distributions, from visualization to statistical tests*
