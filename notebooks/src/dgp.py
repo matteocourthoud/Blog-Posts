@@ -563,7 +563,7 @@ class dgp_ipw():
         income = np.rint(np.random.lognormal(7.5, .3, N))
         
         # Treatment
-        d = np.random.binomial(1, 0.5 + male/10 - np.sqrt(age)/100 + (income>2000)/10, N)==1
+        d = np.random.binomial(1, 0.5 + male/10 - np.sqrt(age)/100 + (income>2000)/20, N)==1
         
         # Outcome
         y = np.round(np.random.normal(20 + 3*male - np.sqrt(age) + np.log(income) + 5*d, 5, N), 2)
