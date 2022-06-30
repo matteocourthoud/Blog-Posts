@@ -547,4 +547,29 @@ class dgp_cuped():
         df = pd.DataFrame({'i': i, 'ad_campaign': d, 'revenue0': y0, 'revenue1': y1})
 
         return df
+    
+
+class dgp_ipw():
+    """
+    Data Generating Process: IPW
+    """
+    
+    def generate_data(self, N=1000, seed=1):
+        np.random.seed(seed)
+        
+        # Control variables
+        male = np.random.binomial(1, 0.5, N)
+        age = np.rint(18 + np.random.beta(2, 5, N)*50)
+        income = np.rint(np.random.lognormal(7.5, .3, N))
+        
+        # Treatment
+        d = np.random.binomial(1, 0.5 + male/10 - np.sqrt(age)/100 + (income>2000)/10, N)==1
+        
+        # Outcome
+        y = np.round(np.random.normal(20 + 3*male - np.sqrt(age) + np.log(income) + 5*d, 5, N), 2)
+
+        # Generate the dataframe
+        df = pd.DataFrame({'outcome': y, 'treated': d, 'male': male, 'age': age, 'income': income})
+
+        return df
 
