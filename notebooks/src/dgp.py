@@ -559,17 +559,50 @@ class dgp_ipw():
         
         # Control variables
         male = np.random.binomial(1, 0.5, N)
-        age = np.rint(18 + np.random.beta(2, 5, N)*50)
+        age = np.rint(18 + np.random.beta(2, 2, N)*50)
         income = np.rint(np.random.lognormal(7.5, .3, N))
         
         # Treatment
-        d = np.random.binomial(1, 0.5 + male/10 - np.sqrt(age)/100 + (income>2000)/20, N)==1
+        pr = np.maximum(0, np.minimum(1, 0.55 - 0.1*male + np.sqrt(age)/3 - np.log(income)/3.6))
+        d = np.random.binomial(1, pr, N)==1
         
         # Outcome
-        y = np.round(np.random.normal(20 + 3*male - np.sqrt(age) + np.log(income) + 5*d, 5, N), 2)
+        y = np.round(np.random.normal(20 + 3*male - np.sqrt(age) + 2*np.log(income) + 2*d, 5, N), 2)
 
         # Generate the dataframe
         df = pd.DataFrame({'outcome': y, 'treated': d, 'male': male, 'age': age, 'income': income})
+
+        return df
+    
+    
+class dgp_compare():
+    """
+    Data Generating Process: a lot of stuff together
+    """
+    
+    def generate_data(self, N=10000, seed=1, include_beta=False):
+        np.random.seed(seed)
+        
+        # Control variables
+        male = np.random.binomial(1, 0.5, N)
+        age = np.rint(18 + np.random.beta(2, 2, N)*50)
+        income = np.rint(np.random.lognormal(7.5, .3, N))
+        
+        # Treatment assignment
+        pr = np.maximum(0, np.minimum(1, 0.55 - 0.1*male + np.sqrt(age)/3 - np.log(income)/3.6))
+        d = np.random.binomial(1, pr, N)==1
+        
+        # Treatment effect
+        beta = np.random.normal(3*male - np.sqrt(age) + 2*np.log(income))
+        beta = beta - np.mean(beta) + 2
+        
+        # Outcome
+        y = np.round(np.random.normal(20 + 3*male - np.sqrt(age) + 2*np.log(income) + beta*d, 5, N), 2)
+
+        # Generate the dataframe
+        df = pd.DataFrame({'outcome': y, 'treated': d, 'male': male, 'age': age, 'income': income})
+        if include_beta:
+            df['beta'] = beta
 
         return df
 
