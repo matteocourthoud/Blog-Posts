@@ -549,28 +549,28 @@ class dgp_cuped():
         return df
     
 
-class dgp_ipw():
+class dgp_darkmode():
     """
-    Data Generating Process: IPW
+    Data Generating Process: blog dark mode and time spend reading
     """
     
-    def generate_data(self, N=1000, seed=1):
+    def generate_data(self, N=300, seed=1):
         np.random.seed(seed)
         
         # Control variables
         male = np.random.binomial(1, 0.5, N)
         age = np.rint(18 + np.random.beta(2, 2, N)*50)
-        income = np.rint(np.random.lognormal(7.5, .3, N))
+        hours = np.round(np.random.lognormal(2, .5, N), 2)
         
         # Treatment
-        pr = np.maximum(0, np.minimum(1, 0.55 - 0.1*male + np.sqrt(age)/3 - np.log(income)/3.6))
-        d = np.random.binomial(1, pr, N)==1
+        pr = np.maximum(0, np.minimum(1, 0.6 - 0.2*male + np.sqrt(age)/12 - np.log(hours)/4))
+        dark_mode = np.random.binomial(1, pr, N)==1
         
         # Outcome
-        y = np.round(np.random.normal(20 + 3*male - np.sqrt(age) + 2*np.log(income) + 2*d, 5, N), 2)
+        read_time = np.round(np.random.normal(20 + 3*male - np.sqrt(age) + 2*np.log(hours) + 2*dark_mode, 5, N), 2)
 
         # Generate the dataframe
-        df = pd.DataFrame({'outcome': y, 'treated': d, 'male': male, 'age': age, 'income': income})
+        df = pd.DataFrame({'read_time': read_time, 'dark_mode': dark_mode, 'male': male, 'age': age, 'hours': hours})
 
         return df
     
