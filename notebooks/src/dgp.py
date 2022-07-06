@@ -560,14 +560,14 @@ class dgp_darkmode():
         # Control variables
         male = np.random.binomial(1, 0.45, N)
         age = np.rint(18 + np.random.beta(2, 2, N)*50)
-        hours = np.round(np.random.lognormal(5, 1, N), 2)
+        hours = np.minimum(np.round(np.random.lognormal(5, 1.3, N), 1), 2000)
         
         # Treatment
-        pr = np.maximum(0, np.minimum(1, 0.4 + 0.2*male + np.sqrt(age)/12 - np.log(hours)/9))
+        pr = np.maximum(0, np.minimum(1, 0.8 + 0.3*male - np.sqrt(age-18)/10))
         dark_mode = np.random.binomial(1, pr, N)==1
         
         # Outcome
-        read_time = np.round(np.random.normal(10 - 5*male - 2*np.sqrt(age) + 4*np.log(hours) + 2*dark_mode, 4, N), 2)
+        read_time = np.round(np.random.normal(10 - 4*male + 2*np.log(hours) + 2*dark_mode, 4, N), 1)
 
         # Generate the dataframe
         df = pd.DataFrame({'read_time': read_time, 'dark_mode': dark_mode, 'male': male, 'age': age, 'hours': hours})
