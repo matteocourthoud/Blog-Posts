@@ -606,3 +606,35 @@ class dgp_compare():
 
         return df
 
+
+class dgp_premium():
+    """
+    Data Generating Process: premium
+    """
+    
+    def generate_data(self, N=300, seed=1, true_te=False):
+        np.random.seed(seed)
+        
+        # Control variables
+        age = np.round(np.random.uniform(18, 60, N), 2)
+        
+        # Treatment
+        premium = np.random.binomial(1, 0.1, N)==1
+        
+        # Heterogeneous effects
+        y0 = 10 + 0.1*(30<age)*(age<50)
+        y1 = 0.5 + 0.3*(35<age)*(age<45)
+        
+        # Outcome
+        revenue = np.round(np.random.normal(y0 + premium*y1, 0.15, N), 2)
+
+        # Generate the dataframe
+        df = pd.DataFrame({'revenue': revenue, 'premium': premium, 'age': age})
+        
+        # Add truth
+        if true_te:
+            df['y0'] = y0
+            df['y1'] = y1
+
+        return df
+
