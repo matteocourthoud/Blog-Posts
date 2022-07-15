@@ -8,6 +8,14 @@ If you find mistakes or you have suggestions for new posts, let me know! Hug ðŸ¤
 
 ## Posts
 
+- [Understanding Meta Learners](https://towardsdatascience.com/8a9c1e340832)<img align="right" width="100" src="covers/meta.png">
+
+  *How to use machine learning to estimate heterogeneous treatment effects*
+
+- [Matching, Weighting, or Regression?](https://towardsdatascience.com/99bf5cffa0d9)<img align="right" width="100" src="covers/ipw.png">
+
+  *Understanding and comparing different methods for conditional causal inference analysis*
+
 - [Understanding CUPED](https://towardsdatascience.com/a822523641af)<img align="right" width="100" src="covers/cuped.png">
 
   *An in-depth guide to the state-of-the-art* *variance reduction technique for A/B tests*
