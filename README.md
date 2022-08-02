@@ -8,6 +8,14 @@ If you find mistakes or you have suggestions for new posts, let me know! Hug ðŸ¤
 
 ## Posts
 
+- [Understanding Synthetic Control Methods](https://towardsdatascience.com/8a9c1e340832)<img align="right" width="100" src="covers/synth.png">
+
+  *A detailed guide to one of the most popular causal inference techniques in the industry*
+
+- [Understanding AIPW, the Doubly-Robust Estimator](https://towardsdatascience.com/ed4097dab27a)<img align="right" width="100" src="covers/aipw.png">
+
+  *A guide to the estimation of conditional average treatment effects (CATE) under model misspecification*
+
 - [Understanding Meta Learners](https://towardsdatascience.com/8a9c1e340832)<img align="right" width="100" src="covers/meta.png">
 
   *How to use machine learning to estimate heterogeneous treatment effects*
