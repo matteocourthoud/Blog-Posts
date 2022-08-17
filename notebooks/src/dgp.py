@@ -686,3 +686,27 @@ class dgp_selfdriving():
         
         return df
 
+
+class dgp_p2p():
+    """
+    Data Generating Process: blog dark mode and time spend reading
+    """
+
+    def generate_data(self, N=50, seed=2):
+        np.random.seed(seed)
+
+        # Hours spent in game
+        hours = 2 + np.round(np.random.normal(1, 1, N), 1)
+
+        # Transactions
+        transactions = np.round(np.random.normal(3*hours, 0.5, N), 2)
+
+        # Generate the dataframe
+        df = pd.DataFrame({'hours': hours, 'transactions': transactions})
+
+        # Generate outliers
+        df.loc[1,:] = [2, 8]
+        df.loc[2,:] = [7, 21]
+        df.loc[3,:] = [6.7, 18]
+
+        return df
