@@ -131,7 +131,7 @@ def binscatter(**kwargs):
 @gif.frame
 def plot_beta(d, N0, N, ci):
     plot = sns.lineplot(x='n', y='beta', data=d.reset_index(drop=True)).\
-        set(xlim=[N0-1,N+1], ylim=[-2, 23], title="Estimated Treatment Effect")
+        set(xlim=[N0-1,N+1], ylim=[-2, 16], title="Estimated Treatment Effect")
     if ci:
         plt.fill_between(d['n'], (d['beta']-d['s']), (d['beta']+d['s']), alpha=.2)
     return plot
