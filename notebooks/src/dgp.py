@@ -710,3 +710,27 @@ class dgp_p2p():
         df.loc[3,:] = [6.7, 18]
 
         return df
+    
+    
+class dgp_credit():
+    """
+    Data Generating Process: credit cards
+    """
+
+    def generate_data(self, N=100, seed=0):
+        np.random.seed(seed)
+        
+        # Credit card balance
+        balance = np.random.lognormal(3, 1, N)
+        
+        # Treatment assignment
+        treated = np.random.binomial(1, 0.5, N)
+        
+        # Spending
+        #spend = np.minimum(np.random.lognormal(1 + treated + 0.1*np.sqrt(balance), 2, N), balance)
+        spend = np.minimum(np.random.exponential(5 + 4*treated + 0.5*np.sqrt(balance), N), balance)
+        
+        # Generate the dataframe
+        df = pd.DataFrame({'c': [1]*N, 'treated': treated,  'balance': np.round(balance,2), 'spend': np.round(spend,2)})
+
+        return df

@@ -7,6 +7,7 @@ Date:   24/03/2022
 import numpy as np
 import scipy as sp
 import pandas as pd
+from numpy.linalg import inv
 from scipy.stats import norm
 import statsmodels.api as sm
 import statsmodels.formula.api as smf
@@ -125,3 +126,40 @@ def binscatter(**kwargs):
         df_est = df_est.rename(columns={'group': kwargs.get("by")})
 
     return df_est
+
+
+@gif.frame
+def plot_beta(d, N0, N, ci):
+    plot = sns.lineplot(x='n', y='beta', data=d.reset_index(drop=True)).\
+        set(xlim=[N0-1,N+1], ylim=[-2, 23], title="Estimated Treatment Effect")
+    if ci:
+        plt.fill_between(d['n'], (d['beta']-d['s']), (d['beta']+d['s']), alpha=.2)
+    return plot
+
+
+def online_regression(df, gifname, ci=False, N0=10):
+
+    # Init
+    N = len(df)
+    x, y = df.iloc[0:N0,:3].to_numpy(), df.iloc[0:N0,3].to_numpy()
+    XiX = inv(x.T @ x)
+    beta = XiX @ x.T @ y
+    S = np.sum((y - x @ beta)**2)
+    df_beta = pd.DataFrame({'n': [N0], 'beta': [beta[1]], 's': [np.sqrt(XiX[1,1] * S / N0)]})
+    frames = []
+
+    # Update estimate live
+    for n in range(N0, N):
+        x, y = df.iloc[n:n+1,:3].to_numpy(), df.iloc[n:n+1,3].to_numpy()
+        S += ( (y - x @ beta)**2 / (1 + x @ XiX @ x.T ) )[0,0]
+        XiX -= (XiX @ x.T @ x @ XiX) / (1 + x @ XiX @ x.T )
+        beta += XiX @ x.T @ (y - x @ beta)
+        temp = pd.DataFrame({'n': [n], 'beta': [beta[1]], 's': [np.sqrt(XiX[1,1] * S / (n-3))]})
+        df_beta = pd.concat([df_beta, temp])
+        frames.append(plot_beta(df_beta, N0, N, ci))
+    
+    # Add extra time 
+    [frames.append(plot_beta(df_beta, N0, N, ci)) for _ in range(20)]
+
+    # Gif from frames
+    gif.save(frames, gifname, duration=5, unit="s", between="startend")
