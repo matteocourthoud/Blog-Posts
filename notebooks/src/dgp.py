@@ -720,17 +720,43 @@ class dgp_credit():
     def generate_data(self, N=100, seed=0):
         np.random.seed(seed)
         
-        # Credit card balance
-        balance = np.random.lognormal(3, 1, N)
+        # Connection speed
+        connection = np.random.lognormal(3, 1, N)
         
         # Treatment assignment
-        treated = np.random.binomial(1, 0.5, N)
+        newUI = np.random.binomial(1, 0.5, N)
         
-        # Spending
-        #spend = np.minimum(np.random.lognormal(1 + treated + 0.1*np.sqrt(balance), 2, N), balance)
-        spend = np.minimum(np.random.exponential(5 + 4*treated + 0.5*np.sqrt(balance), N), balance)
+        # Transfer speed
+        transfer = np.minimum(np.random.exponential(10 + 4*newUI - 0.5*np.sqrt(connection), N), connection)
+        transfer = np.minimum(np.random.lognormal(2.8 + newUI, 1, N), connection)
         
         # Generate the dataframe
-        df = pd.DataFrame({'c': [1]*N, 'treated': treated,  'balance': np.round(balance,2), 'spend': np.round(spend,2)})
+        df = pd.DataFrame({'newUI': newUI,  
+                           'connection': np.round(connection,2), 
+                           'transfer': np.round(transfer,2)})
+
+        return df
+
+
+class dgp_fidelty():
+    """
+    Data Generating Process: online marketplace
+    """
+
+    def generate_data(self, seed=1, N=10_000):
+        np.random.seed(seed)
+
+        # Treatment
+        age = np.random.randint(18, 55, N)
+        gender = np.random.choice(['Male', 'Female'], p=[0.6, 0.4], size=N)
+        income = np.random.lognormal(4 + np.log(age), 0.1, N)
+        fidelty = np.random.binomial(1, 0.5, N)
+
+        # Spend
+        spend = 50*(gender=='Female') + income/10 + fidelty*np.sqrt(age)
+        spend = np.maximum(np.round(spend, 2) - 220, 0)
+
+        # Generate the dataframe
+        df = pd.DataFrame({'fidelty': fidelty, 'spend': spend, 'age': age, 'gender': gender})
 
         return df

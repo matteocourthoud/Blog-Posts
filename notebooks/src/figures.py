@@ -131,17 +131,24 @@ def binscatter(**kwargs):
 @gif.frame
 def plot_beta(d, N0, N, ci):
     plot = sns.lineplot(x='n', y='beta', data=d.reset_index(drop=True)).\
-        set(xlim=[N0-1,N+1], ylim=[-2, 16], title="Estimated Treatment Effect")
+        set(xlim=[N0-1,N+1], ylim=[-14, 28], title="Estimated Treatment Effect")
     if ci:
         plt.fill_between(d['n'], (d['beta']-d['s']), (d['beta']+d['s']), alpha=.2)
     return plot
+
+
+def xy_from_df(df, r0, r1):
+    x = df.iloc[r0:r1,:-1].to_numpy()
+    x = np.concatenate((np.ones((np.size(x,0), 1)), x), axis=1)
+    y = df.iloc[r0:r1,-1].to_numpy()
+    return x, y
 
 
 def online_regression(df, gifname, ci=False, N0=10):
 
     # Init
     N = len(df)
-    x, y = df.iloc[0:N0,:3].to_numpy(), df.iloc[0:N0,3].to_numpy()
+    x, y = xy_from_df(df, 0, 10)
     XiX = inv(x.T @ x)
     beta = XiX @ x.T @ y
     S = np.sum((y - x @ beta)**2)
@@ -150,7 +157,7 @@ def online_regression(df, gifname, ci=False, N0=10):
 
     # Update estimate live
     for n in range(N0, N):
-        x, y = df.iloc[n:n+1,:3].to_numpy(), df.iloc[n:n+1,3].to_numpy()
+        x, y = xy_from_df(df, n, n+1)
         S += ( (y - x @ beta)**2 / (1 + x @ XiX @ x.T ) )[0,0]
         XiX -= (XiX @ x.T @ x @ XiX) / (1 + x @ XiX @ x.T )
         beta += XiX @ x.T @ (y - x @ beta)
