@@ -738,9 +738,9 @@ class dgp_credit():
         return df
 
 
-class dgp_fidelty():
+class dgp_loyalty():
     """
-    Data Generating Process: online marketplace
+    Data Generating Process: loyalty card
     """
 
     def generate_data(self, seed=1, N=10_000):
@@ -750,13 +750,13 @@ class dgp_fidelty():
         age = np.random.randint(18, 55, N)
         gender = np.random.choice(['Male', 'Female'], p=[0.6, 0.4], size=N)
         income = np.random.lognormal(4 + np.log(age), 0.1, N)
-        fidelty = np.random.binomial(1, 0.5, N)
+        loyalty = np.random.binomial(1, 0.5, N)
 
         # Spend
-        spend = 50*(gender=='Female') + income/10 + fidelty*np.sqrt(age)
+        spend = 50*(gender=='Female') + income/10 + loyalty*np.sqrt(age)
         spend = np.maximum(np.round(spend, 2) - 220, 0)
 
         # Generate the dataframe
-        df = pd.DataFrame({'fidelty': fidelty, 'spend': spend, 'age': age, 'gender': gender})
+        df = pd.DataFrame({'loyalty': loyalty, 'spend': spend, 'age': age, 'gender': gender})
 
         return df
