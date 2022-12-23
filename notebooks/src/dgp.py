@@ -2,6 +2,9 @@
 Title:  Data Generating Processes
 Author: Matteo Courthoud
 Date:   24/03/2022
+
+This file contains the superclass DGP controlling data generating processes
+and a set of subclasses for the data of the different case studies.
 """
 
 
@@ -12,6 +15,68 @@ import pandas as pd
 from numpy.random import normal as rnd
 from scipy.special import expit
 from sklearn.preprocessing import MinMaxScaler
+from joblib import Parallel, delayed
+
+
+class DGP:
+
+    def __init__(self, 
+                 assignment_var: str,
+                 outcome_vars: list[str],
+                 n: int = 100, 
+                 p: float = 0.5):
+        self.assignment_var = assignment_var
+        self.outcome_vars = outcome_vars
+        self.n = n
+        self.p = p
+        self.df = self.generate_potential_outcomes() 
+
+    def generate_potential_outcomes(self, seed: int = 0) -> pd.DataFrame:
+        """Generates a dataframes with treatment and control potential outcomes."""
+        return pd.DataFrame()
+
+    def add_assignment(self, df: pd.DataFrame, seed: int = 0) -> pd.DataFrame:
+        """Adds the treatment assignment variable."""
+        np.random.seed(seed)
+        df[self.assignment_var] = np.random.binomial(1, self.p, self.n)
+        return df
+
+    def generate_data(self, seed_data: int = 0, seed_assignment: int = 0) -> pd.DataFrame:
+        """Generate potential outcomes, add assignment and select realized outcomes."""
+        df = self.df.copy() if seed_data==-1 else self.generate_potential_outcomes(seed_data)
+        df = self.add_assignment(df, seed_assignment)
+        t = df[self.assignment_var].values
+        for var in self.outcome_vars:
+            df[var] = df[var + '_c'].values * (1-t) + df[var + '_t'].values * t
+            del df[var + '_c']
+            del df[var + '_t']
+        return df
+
+    def evaluate_f_redrawing_data(self, f, K):
+        """Evaluates the function f on K draws of the data (both potential outcomes and treatment assignment)."""
+        results = Parallel(n_jobs=8)(delayed(f)(self.generate_data(seed_assignment=i)) for i in range(K))
+        return results
+
+    def evaluate_f_redrawing_outcomes(self, f, K):
+        """Evaluates the function f on K draws of the treatment assignment. Potential outcomes are fixed."""
+        results = Parallel(n_jobs=8)(delayed(f)(self.generate_data(seed_data=i, seed_assignment=i)) for i in range(K))
+        return results
+
+
+class dgp_clicks(DGP):
+    """Data Generating Process: clicks and views."""
+        
+    def generate_potential_outcomes(self, seed: int = 0):
+        np.random.seed(seed)
+        u = np.random.uniform(0, 3, self.n)
+        views_c = 1 + np.random.exponential(u + 5)
+        views_t = views_c + 1
+        clicks_c= np.random.exponential(u / 2)
+        clicks_t = clicks_c + 0.1
+        df = pd.DataFrame({'views_c': views_c//1, 'views_t': views_t//1, 
+                           'clicks_c': clicks_c//1, 'clicks_t': clicks_t//1, })
+        return df
+
 
 class dgp_ad():
     """
