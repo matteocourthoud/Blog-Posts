@@ -71,13 +71,16 @@ class dgp_cloud(DGP):
     
     def generate_potential_outcomes(self, seed: int = 0):
         np.random.seed(seed)
-        cost_c = 1 + np.random.exponential(5, self.n)
-        cost_t = cost_c + 0.2
-        revenue_c = np.random.normal(cost_c*10, 5, self.n)
-        revenue_t = revenue_c + 0.4
-        df = pd.DataFrame({'cost_c': cost_c, 'cost_t': cost_t, 
-                           'revenue_c': revenue_c, 'revenue_t': revenue_t, })
-        return df
+        cost_c = np.random.exponential(3, self.n)
+        effect = np.random.uniform(0, 1, self.n)
+        cost_t = cost_c + effect
+        revenue_c = np.random.normal(cost_c*10 - 4, 1, self.n)
+        revenue_t = revenue_c + effect * 2
+        df = pd.DataFrame({'cost_c': np.maximum(cost_c, 0), 
+                           'cost_t': np.maximum(cost_t, 0), 
+                           'revenue_c': np.maximum(revenue_c, 0), 
+                           'revenue_t': np.maximum(revenue_t, 0)})
+        return df.round(2)
 
 
 class dgp_ad():
