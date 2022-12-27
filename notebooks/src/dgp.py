@@ -16,19 +16,15 @@ from numpy.random import normal as rnd
 from scipy.special import expit
 from sklearn.preprocessing import MinMaxScaler
 from joblib import Parallel, delayed
+from dataclasses import dataclass
 
 
+@dataclass
 class DGP:
+    n: int = 100
+    p: int = 0.5
 
-    def __init__(self, 
-                 assignment_var: str,
-                 outcome_vars: list[str],
-                 n: int = 100, 
-                 p: float = 0.5):
-        self.assignment_var = assignment_var
-        self.outcome_vars = outcome_vars
-        self.n = n
-        self.p = p
+    def __post_init__(self):
         self.df = self.generate_potential_outcomes() 
 
     def generate_potential_outcomes(self, seed: int = 0) -> pd.DataFrame:
@@ -43,7 +39,7 @@ class DGP:
 
     def generate_data(self, seed_data: int = 0, seed_assignment: int = 0) -> pd.DataFrame:
         """Generate potential outcomes, add assignment and select realized outcomes."""
-        df = self.df.copy() if seed_data==-1 else self.generate_potential_outcomes(seed_data)
+        df = self.df.copy() if seed_data==0 else self.generate_potential_outcomes(seed_data)
         df = self.add_assignment(df, seed_assignment)
         t = df[self.assignment_var].values
         for var in self.outcome_vars:
@@ -54,27 +50,33 @@ class DGP:
 
     def evaluate_f_redrawing_data(self, f, K):
         """Evaluates the function f on K draws of the data (both potential outcomes and treatment assignment)."""
-        results = Parallel(n_jobs=8)(delayed(f)(self.generate_data(seed_assignment=i)) for i in range(K))
+        results = Parallel(n_jobs=8)(delayed(f)(self.generate_data(seed_data=i, seed_assignment=K-i)) for i in range(K))
         return results
 
     def evaluate_f_redrawing_outcomes(self, f, K):
         """Evaluates the function f on K draws of the treatment assignment. Potential outcomes are fixed."""
-        results = Parallel(n_jobs=8)(delayed(f)(self.generate_data(seed_data=i, seed_assignment=i)) for i in range(K))
+        results = Parallel(n_jobs=8)(delayed(f)(self.generate_data(seed_assignment=i)) for i in range(K))
+        return results
+    
+    def evaluate_f_redrawing_potentialoutcomes(self, f, K):
+        """Evaluates the function f on K draws of the potential outcomes."""
+        results = Parallel(n_jobs=8)(delayed(f)(self.generate_potential_outcomes(seed_data=i)) for i in range(K))
         return results
 
 
-class dgp_clicks(DGP):
-    """Data Generating Process: clicks and views."""
-        
+class dgp_cloud(DGP):
+    """DGP: cloud computing and return on investment."""
+    assignment_var: str = 'new_machine'
+    outcome_vars: list[str] = ['cost', 'revenue']
+    
     def generate_potential_outcomes(self, seed: int = 0):
         np.random.seed(seed)
-        u = np.random.uniform(0, 3, self.n)
-        views_c = 1 + np.random.exponential(u + 5)
-        views_t = views_c + 1
-        clicks_c= np.random.exponential(u / 2)
-        clicks_t = clicks_c + 0.1
-        df = pd.DataFrame({'views_c': views_c//1, 'views_t': views_t//1, 
-                           'clicks_c': clicks_c//1, 'clicks_t': clicks_t//1, })
+        cost_c = 1 + np.random.exponential(5, self.n)
+        cost_t = cost_c + 0.2
+        revenue_c = np.random.normal(cost_c*10, 5, self.n)
+        revenue_t = revenue_c + 0.4
+        df = pd.DataFrame({'cost_c': cost_c, 'cost_t': cost_t, 
+                           'revenue_c': revenue_c, 'revenue_t': revenue_t, })
         return df
 
 
