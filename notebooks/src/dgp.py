@@ -37,9 +37,9 @@ class DGP:
         df[self.assignment_var] = np.random.binomial(1, self.p, self.n)
         return df
 
-    def generate_data(self, seed_data: int = 0, seed_assignment: int = 0) -> pd.DataFrame:
+    def generate_data(self, seed_data: int = 0, seed_assignment: int = 0, **kwargs) -> pd.DataFrame:
         """Generate potential outcomes, add assignment and select realized outcomes."""
-        df = self.df.copy() if seed_data==0 else self.generate_potential_outcomes(seed_data)
+        df = self.generate_potential_outcomes(seed_data, **kwargs)
         df = self.add_assignment(df, seed_assignment)
         t = df[self.assignment_var].values
         for var in self.outcome_vars:
@@ -80,6 +80,37 @@ class dgp_cloud(DGP):
                            'cost_t': np.maximum(cost_t, 0), 
                            'revenue_c': np.maximum(revenue_c, 0), 
                            'revenue_t': np.maximum(revenue_t, 0)})
+        return df.round(2)
+
+
+class dgp_infinite_scroll(DGP):
+    """DGP: work in progress"""
+    assignment_var: str = 'infinite_scroll'
+    outcome_vars: list[str] = ['ad_revenue']
+
+    def generate_potential_outcomes(self, seed: int = 0, true_effect: float = None):
+        np.random.seed(seed)
+        past = np.random.normal(2, 1, self.n)
+        outcome_c = np.random.normal(past, 1, self.n)
+        avg_effect = np.random.standard_t(1.3) / 300 if true_effect is None else true_effect
+        outcome_t = outcome_c + avg_effect
+        df = pd.DataFrame({'ad_revenue_c': outcome_c, 'ad_revenue_t': outcome_t, 'past_revenue': past})
+        return df.round(2)
+
+
+class dgp_darkmode():
+    """DGP: blog dark mode and time spend reading"""
+    assignment_var: str = 'dark_mode'
+    outcome_vars: list[str] = ['outcome']
+
+    def generate_data(self, seed: int = 0):
+        np.random.seed(seed)
+        male = np.random.binomial(1, 0.45, N)
+        age = np.rint(18 + np.random.beta(2, 2, N)*50)
+        outcome_c = np.random.normal(10, 4, N)
+        outcome_t = outcome_c - 4*male + 2*np.log(hours) + 2*dark_mode
+        df = pd.DataFrame({'male': male, 'age': age, 'hours': hours,
+                          'outcome_c': outcome_c, 'outcome_t': outcome_t})
         return df.round(2)
 
 
