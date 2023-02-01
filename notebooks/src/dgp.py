@@ -25,27 +25,40 @@ class DGP:
     p: int = 0.5
 
     def __post_init__(self):
-        self.df = self.generate_potential_outcomes() 
+        self.df = self.generate_potential_outcomes()
+    
+    def generate_baseline(self, seed: int = 0) -> pd.DataFrame:
+        """Generates a dataframes with the baseline outcome."""
+        return pd.DataFrame()
+    
+    def add_treatment_effect(self, df : pd.DataFrame, seed: int = 0) -> pd.DataFrame:
+        """Add the treatment effect to the baseline outcome."""
+        return pd.DataFrame
 
     def generate_potential_outcomes(self, seed: int = 0) -> pd.DataFrame:
         """Generates a dataframes with treatment and control potential outcomes."""
-        return pd.DataFrame()
+        df = self.generate_baseline(seed)
+        df = self.add_treatment_effect(df, seed)
+        for y in self.Y:
+            df[y + '_t'] = df[y + '_c'] + df['effect_on_' + y]
+            del df['effect_on_' + y]
+        return df.round(2)
 
     def add_assignment(self, df: pd.DataFrame, seed: int = 0) -> pd.DataFrame:
         """Adds the treatment assignment variable."""
         np.random.seed(seed)
-        df[self.assignment_var] = np.random.binomial(1, self.p, self.n)
+        df[self.D] = np.random.binomial(1, self.p, self.n)
         return df
 
-    def generate_data(self, seed_data: int = 0, seed_assignment: int = 0, **kwargs) -> pd.DataFrame:
+    def generate_data(self, seed_data: int = 0, seed_assignment: int = 1, **kwargs) -> pd.DataFrame:
         """Generate potential outcomes, add assignment and select realized outcomes."""
         df = self.generate_potential_outcomes(seed_data, **kwargs)
         df = self.add_assignment(df, seed_assignment)
-        t = df[self.assignment_var].values
-        for var in self.outcome_vars:
-            df[var] = df[var + '_c'].values * (1-t) + df[var + '_t'].values * t
-            del df[var + '_c']
-            del df[var + '_t']
+        d = df[self.D].values
+        for y in self.Y:
+            df[y] = df[y + '_c'].values * (1-d) + df[y + '_t'].values * d
+            del df[y + '_c']
+            del df[y + '_t']
         return df
 
     def evaluate_f_redrawing_data(self, f, K):
@@ -64,10 +77,36 @@ class DGP:
         return results
 
 
+class dgp_online_discounts(DGP):
+    """DGP: online discounts"""
+    devices = ['desktop', 'mobile']
+    browsers = ['chrome', 'safari', 'firefox', 'explorer', 'edge', 'brave', 'other']
+    regions = [str(x) for x in range(10)]
+    X: list[str] = ['time', 'device', 'browser', 'region']
+    D: str = 'discount'
+    Y: list[str] = ['spend']
+
+    def generate_baseline(self, seed:int = 0):
+        np.random.seed(seed)
+        time = np.random.beta(1, 1, size=self.n) * 24
+        device = np.random.choice(self.devices, size=self.n)
+        browser = np.random.choice(self.browsers, size=self.n)
+        region = np.random.choice(self.regions, size=self.n)
+        spend_c = np.random.exponential(10, self.n) - 5
+        df = pd.DataFrame({'spend_c': spend_c, 'time': time, 'device': device, 'browser': browser, 'region': region})
+        return df
+    
+    def add_treatment_effect(self, df, seed:int = 0):
+        np.random.seed(seed)
+        effect = 7*np.exp(-(df.time-18)**2/100) + 3*(df.browser=='safari') - 2*(df.device=='desktop') + (df.region=='3')
+        df['effect_on_spend'] = np.maximum(0, effect)
+        return df
+
+
 class dgp_cloud(DGP):
     """DGP: cloud computing and return on investment."""
-    assignment_var: str = 'new_machine'
-    outcome_vars: list[str] = ['cost', 'revenue']
+    D: str = 'new_machine'
+    Y: list[str] = ['cost', 'revenue']
     
     def generate_potential_outcomes(self, seed: int = 0):
         np.random.seed(seed)
@@ -85,8 +124,8 @@ class dgp_cloud(DGP):
 
 class dgp_infinite_scroll(DGP):
     """DGP: work in progress"""
-    assignment_var: str = 'infinite_scroll'
-    outcome_vars: list[str] = ['ad_revenue']
+    D: str = 'infinite_scroll'
+    Y: list[str] = ['ad_revenue']
 
     def generate_potential_outcomes(self, seed: int = 0, true_effect: float = None):
         np.random.seed(seed)

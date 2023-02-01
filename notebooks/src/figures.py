@@ -106,13 +106,13 @@ def gif_projection(x, y, df, gifname, K=50):
     gif.save(frames, gifname, duration=3, unit="s", between="startend")
     
 
-def binscatter(**kwargs):
+def binscatter(data, x, y, by=None, **kwargs):
     # Estimate binsreg
-    est = binsreg.binsreg(**kwargs)
+    est = binsreg.binsreg(data=data, x=x, y=y, **kwargs)
     
     # Retrieve estimates
     df_est = pd.concat([d.dots for d in est.data_plot])
-    df_est = df_est.rename(columns={'x': kwargs.get("x"), 'fit': kwargs.get("y")})
+    df_est = df_est.rename(columns={'x': x, 'fit': y})
     
     # Add confidence intervals
     if "ci" in kwargs:
@@ -121,12 +121,19 @@ def binscatter(**kwargs):
         df_est['ci'] = df_est['ci_r'] - df_est['ci_l']
     
     # Rename groups
-    if "by" in kwargs:
-        df_est['group'] = df_est['group'].astype(df[kwargs.get("by")].dtype)
-        df_est = df_est.rename(columns={'group': kwargs.get("by")})
+    if not by is None:
+        df_est['group'] = df_est['group'].astype(df[by].dtype)
+        df_est = df_est.rename(columns={'group': by})
 
     return df_est
 
+
+def binscatterplot(data, x, y, hue=None, **kwargs):
+    """Binned scatterplot function."""
+    df_est = binscatter(data=data, x=x, y=y, by=hue, **kwargs)
+    plot = sns.scatterplot(x=x, y=y, hue=hue, data=df_est)
+    return plot
+    
 
 @gif.frame
 def plot_beta(d, N0, N, ci):

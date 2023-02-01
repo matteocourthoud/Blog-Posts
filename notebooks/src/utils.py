@@ -4,10 +4,6 @@ import pandas as pd
 import statsmodels.api as sm
 import statsmodels.formula.api as smf
 
-from sklearn.tree import DecisionTreeRegressor, plot_tree
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.model_selection import train_test_split 
-
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import seaborn as sns
