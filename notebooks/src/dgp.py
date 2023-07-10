@@ -98,7 +98,7 @@ class dgp_online_discounts(DGP):
     
     def add_treatment_effect(self, df, seed:int = 0):
         np.random.seed(seed)
-        effect = 7*np.exp(-(df.time-18)**2/100) + 3*(df.browser=='safari') - 2*(df.device=='desktop') + (df.region=='3')
+        effect = 7*np.exp(-(df.time-18)**2/100) + 3*(df.browser=='safari') - 2*(df.device=='desktop') + (df.region=='3') - 2.5
         df['effect_on_spend'] = np.maximum(0, effect)
         return df
 

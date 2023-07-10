@@ -3,6 +3,8 @@ import scipy as sp
 import pandas as pd
 import statsmodels.api as sm
 import statsmodels.formula.api as smf
+import copy
+import types
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -15,7 +17,12 @@ warnings.filterwarnings('ignore')
 # Plot settings
 plt.style.use('seaborn')
 sns.set_theme(style="ticks")
-mpl.rcParams['figure.figsize'] = (10,6)
+mpl.rcParams['figure.figsize'] = (10, 6)
+
+# Theme
+palette = ['#003f5c', '#ff6e54', '#f9f871', '#2db88b', '#955196', '#003f5c', '#ff6e54', '#f9f871', '#2db88b', '#955196']
+mpl.rcParams['axes.prop_cycle'] = mpl.cycler(color=palette) 
+
 
 # Title
 mpl.rcParams['figure.titlesize'] = 22
@@ -52,6 +59,7 @@ mpl.rcParams['legend.borderpad'] = 0.6
 # Other
 mpl.rcParams['lines.linewidth'] = 4
 mpl.rcParams['lines.markersize'] = 10
-mpl.rcParams['scatter.edgecolors'] = None
+mpl.rcParams['scatter.edgecolors'] = 'none'
+mpl.rcParams['patch.edgecolor'] = 'none'
 
 
