@@ -5,6 +5,7 @@ import statsmodels.api as sm
 import statsmodels.formula.api as smf
 import copy
 import types
+from sklearn.base import clone
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
