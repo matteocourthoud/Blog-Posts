@@ -35,13 +35,14 @@ class DGP:
         """Add the treatment effect to the baseline outcome."""
         return pd.DataFrame
 
-    def generate_potential_outcomes(self, seed: int = 0) -> pd.DataFrame:
+    def generate_potential_outcomes(self, seed=0, keep_po=False) -> pd.DataFrame:
         """Generates a dataframes with treatment and control potential outcomes."""
         df = self.generate_baseline(seed)
         df = self.add_treatment_effect(df, seed)
         for y in self.Y:
             df[y + '_t'] = df[y + '_c'] + df['effect_on_' + y]
-            del df['effect_on_' + y]
+            if not keep_po:
+                del df['effect_on_' + y]
         return df.round(2)
 
     def add_assignment(self, df: pd.DataFrame, seed: int = 0) -> pd.DataFrame:
@@ -50,15 +51,16 @@ class DGP:
         df[self.D] = np.random.binomial(1, self.p, self.n)
         return df
 
-    def generate_data(self, seed_data: int = 0, seed_assignment: int = 1, **kwargs) -> pd.DataFrame:
+    def generate_data(self, seed_data=0, seed_assignment=1, keep_po=False, **kwargs) -> pd.DataFrame:
         """Generate potential outcomes, add assignment and select realized outcomes."""
-        df = self.generate_potential_outcomes(seed_data, **kwargs)
+        df = self.generate_potential_outcomes(seed_data, keep_po, **kwargs)
         df = self.add_assignment(df, seed_assignment)
         d = df[self.D].values
         for y in self.Y:
             df[y] = df[y + '_c'].values * (1-d) + df[y + '_t'].values * d
-            del df[y + '_c']
-            del df[y + '_t']
+            if not keep_po:
+                del df[y + '_c']
+                del df[y + '_t']
         return df
 
     def evaluate_f_redrawing_data(self, f, K):
