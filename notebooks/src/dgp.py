@@ -76,6 +76,32 @@ class DGP:
         results = Parallel(n_jobs=8)(delayed(f)(self.generate_potential_outcomes(seed_data=i)) for i in range(K))
         return results
 
+class dgp_promotional_email(DGP):
+    """DGP: promotional email"""
+    X: list[str] = ['new', 'age', 'sales_old']
+    D: str = 'mail'
+    Y: list[str] = ['sales']
+
+    def generate_baseline(self, seed:int = 0):
+        np.random.seed(seed)
+        x1 = np.random.binomial(1, 0.4, self.n)
+        x2 = np.round(np.random.uniform(20, 60, self.n), 2)
+        x3_ = -1.45 + (100/x2) - np.maximum((x2-60)**2/500, 0) + 0.2*x1 
+        x3 = np.maximum(np.random.normal(x3_, 0.01), 0)
+        y0 = np.maximum(np.random.normal(x3_, 0.05, self.n), 0)
+        df = pd.DataFrame({'new': x1, 'age': x2, 'sales_old': x3, 'sales_c': y0})
+        return df
+
+    def add_treatment_effect(self, df, seed:int = 0):
+        np.random.seed(seed)
+        df['effect_on_sales'] = -0.05*(df['age']<30) + 0.08*(df['age']>45)
+        return df
+
+    def add_assignment(self, df: pd.DataFrame, seed: int = 0) -> pd.DataFrame:
+        np.random.seed(seed)
+        df[self.D] = np.random.binomial(1, 0.2 + 0.6*(1-df.new))
+        return df
+
 
 class dgp_online_discounts(DGP):
     """DGP: online discounts"""
