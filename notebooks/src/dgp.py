@@ -38,7 +38,7 @@ class DGP:
     def generate_potential_outcomes(self, seed=0, keep_po=False) -> pd.DataFrame:
         """Generates a dataframes with treatment and control potential outcomes."""
         df = self.generate_baseline(seed)
-        df = self.add_treatment_effect(df, seed)
+        df = self.add_treatment_effect(df, seed+1)
         for y in self.Y:
             df[y + '_t'] = df[y + '_c'] + df['effect_on_' + y]
             if not keep_po:
@@ -51,6 +51,10 @@ class DGP:
         df[self.D] = np.random.binomial(1, self.p, self.n)
         return df
 
+    def add_post_treatment_variables(self, df : pd.DataFrame, seed: int = 0) -> pd.DataFrame:
+        """Add post-treatment variables."""
+        return df
+
     def generate_data(self, seed_data=0, seed_assignment=1, keep_po=False, **kwargs) -> pd.DataFrame:
         """Generate potential outcomes, add assignment and select realized outcomes."""
         df = self.generate_potential_outcomes(seed_data, keep_po, **kwargs)
@@ -61,6 +65,7 @@ class DGP:
             if not keep_po:
                 del df[y + '_c']
                 del df[y + '_t']
+        df = self.add_post_treatment_variables(df, seed_data)
         return df
 
     def evaluate_f_redrawing_data(self, f, K):
@@ -77,6 +82,7 @@ class DGP:
         """Evaluates the function f on K draws of the potential outcomes."""
         results = Parallel(n_jobs=8)(delayed(f)(self.generate_potential_outcomes(seed_data=i)) for i in range(K))
         return results
+
 
 class dgp_promotional_email(DGP):
     """DGP: promotional email"""
