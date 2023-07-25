@@ -84,6 +84,41 @@ class DGP:
         return results
 
 
+class dgp_gift(DGP):
+    """DGP: gift"""
+    X: list[str] = ['age', 'rev_old', 'rev_change']
+    D: str = 'gift'
+    Y: list[str] = ['churn', 'revenue']
+
+    def generate_baseline(self, seed:int = 0):
+        np.random.seed(seed)
+        months = np.random.exponential(5, self.n)
+        rev_old = np.maximum(0, np.random.exponential(7, self.n) - 2)
+        rev_change = np.random.normal(0, 2, self.n)
+        churn_c = np.random.beta(1 - rev_change*(rev_change<0), 2 + rev_old) > 0.4
+        rev_c = 0.8*rev_old + 0.2*np.maximum(0, np.random.exponential(7, self.n) - 2)
+        df = pd.DataFrame({'months': months, 'rev_old': rev_old, 'rev_change': rev_change,
+                           'churn_c': churn_c, 'revenue_c': rev_c})
+        return df
+
+    def add_treatment_effect(self, df, seed:int = 1):
+        np.random.seed(seed)
+        effect_c = - np.random.binomial(1, 0.3, self.n) * (df.months<7)
+        df['effect_on_churn'] = effect_c * (df.churn_c==1)
+        effect_r = np.random.normal(0.9, 0.5, self.n)* (df.months>3)
+        df['effect_on_revenue'] = np.maximum(-df.revenue_c, effect_r)
+        return df
+
+    def add_assignment(self, df: pd.DataFrame, seed: int = 2) -> pd.DataFrame:
+        np.random.seed(seed)
+        df[self.D] = np.random.binomial(1, 0.5, self.n)
+        return df
+
+    def add_post_treatment_variables(self, df : pd.DataFrame, seed: int = 0) -> pd.DataFrame:
+        df.revenue *= (1-df.churn)
+        return df
+
+
 class dgp_promotional_email(DGP):
     """DGP: promotional email"""
     X: list[str] = ['new', 'age', 'sales_old']
