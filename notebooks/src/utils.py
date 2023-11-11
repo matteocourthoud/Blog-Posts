@@ -16,7 +16,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 # Plot settings
-plt.style.use('seaborn')
+#plt.style.use('seaborn')
 sns.set_theme(style="ticks")
 mpl.rcParams['figure.figsize'] = (10, 6)
 
