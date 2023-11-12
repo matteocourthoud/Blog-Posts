@@ -86,6 +86,7 @@ class DGP:
 
 class dgp_notification_newsletter(DGP):
     """DGP for instrumental_variables article."""
+    X: list[str] = ['spend_old']
     D: str = 'notification'
     Y: list[str] = ['subscription', 'spend']
 
@@ -97,14 +98,15 @@ class dgp_notification_newsletter(DGP):
     def generate_potential_outcomes(self, seed: int = 0, true_effect: float = None):
         np.random.seed(seed)
         budget = np.random.exponential(100, self.n)
-        u_subscription = np.log(budget) + np.random.normal(-5, 1)
+        u_subscription = np.log(budget) + np.random.normal(-5, 1, self.n)
         subscription_c = 1 * (u_subscription > 0)
         subscription_t = 1 * (u_subscription + 0.7 > 0)
-        spend = np.sqrt(budget) + np.random.normal(1, 1)
+        spend = np.sqrt(budget) + np.random.normal(1, 1, self.n)
+        spend_old = np.maximum(0, spend + np.random.normal(0, 1, self.n))
         spend_c = np.maximum(0, spend + 6 * subscription_c)
         spend_t = np.maximum(0, spend + 6 * subscription_t)
         df = pd.DataFrame({'subscription_c': subscription_c, 'subscription_t': subscription_t, 
-                           'spend_c': spend_c, 'spend_t': spend_t})
+                           'spend_old': spend_old, 'spend_c': spend_c, 'spend_t': spend_t})
         return df.round(2)
 
 
