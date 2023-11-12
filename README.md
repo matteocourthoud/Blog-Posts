@@ -8,6 +8,18 @@ If you find mistakes or you have suggestions for new posts, let me know! Hug ðŸ¤
 
 ## Posts
 
+- [Understanding Instrumental Variables](https://towardsdatascience.com/)<img align="right" width="100" src="covers/instrumental_variables.png">
+
+  *How to estimate causal effects when you cannot randomize treatment*
+
+- [Beyond Churn Prediction and Churn Uplift](https://towardsdatascience.com/45225e5a7541)<img align="right" width="100" src="covers/beyond_churn.png">
+
+  *How to best target policies in the presence of churn*
+
+- [Evaluating Uplift Models](https://towardsdatascience.com/8a078996a113)<img align="right" width="100" src="covers/evaluate_uplift.png">
+
+  *How to compare and select the best uplift model*
+
 - [From Causal Trees to Forests](https://towardsdatascience.com/43c4536f1481)<img align="right" width="100" src="covers/causal_forests.png">
 
   *How to use random forests to do policy targeting*
