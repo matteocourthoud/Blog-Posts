@@ -84,6 +84,30 @@ class DGP:
         return results
 
 
+class dgp_notification_newsletter(DGP):
+    """DGP for instrumental_variables article."""
+    D: str = 'notification'
+    Y: list[str] = ['subscription', 'spend']
+
+    def add_assignment(self, df: pd.DataFrame, seed: int = 0) -> pd.DataFrame:
+        np.random.seed(seed)
+        df[self.D] = np.arange(0, self.n) % 2
+        return df
+
+    def generate_potential_outcomes(self, seed: int = 0, true_effect: float = None):
+        np.random.seed(seed)
+        budget = np.random.exponential(100, self.n)
+        u_subscription = np.log(budget) + np.random.normal(-5, 1)
+        subscription_c = 1 * (u_subscription > 0)
+        subscription_t = 1 * (u_subscription + 0.7 > 0)
+        spend = np.sqrt(budget) + np.random.normal(1, 1)
+        spend_c = np.maximum(0, spend + 6 * subscription_c)
+        spend_t = np.maximum(0, spend + 6 * subscription_t)
+        df = pd.DataFrame({'subscription_c': subscription_c, 'subscription_t': subscription_t, 
+                           'spend_c': spend_c, 'spend_t': spend_t})
+        return df.round(2)
+
+
 class dgp_gift(DGP):
     """DGP: gift"""
     X: list[str] = ['age', 'rev_old', 'rev_change']
