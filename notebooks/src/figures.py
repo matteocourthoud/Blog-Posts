@@ -5,12 +5,10 @@ Date:   24/03/2022
 """
 
 import numpy as np
-import scipy as sp
 import pandas as pd
 from numpy.linalg import inv
 from scipy.stats import norm
 import statsmodels.api as sm
-import statsmodels.formula.api as smf
 
 import gif
 import binsreg
